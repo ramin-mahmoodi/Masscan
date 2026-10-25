@@ -110,6 +110,9 @@ handle_icmp(struct Output *out, time_t timestamp,
     if (!echo_reply_dedup)
         echo_reply_dedup = dedup_create();
 
+    if (length < parsed->transport_offset + 8)
+        return;
+
     seqno_me = px[parsed->transport_offset+4]<<24
                 | px[parsed->transport_offset+5]<<16
                 | px[parsed->transport_offset+6]<<8

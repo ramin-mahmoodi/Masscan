@@ -289,11 +289,10 @@ int ipv6address_selftest(void)
       {"1::2", {.ipv6 = {0x0001000000000000, 0x0000000000000002}, .version = 6}},
       {"2::1", {.ipv6 = {0x0002000000000000, 0x0000000000000001}, .version = 6}},
       {"1:2::", {.ipv6 = {0x0001000200000000, 0x0000000000000000}, .version = 6}},
-      {NULL, {{0, 0}, 0}}
+      {NULL, {.version = 0}}
   };
 
   int x = 0;
-  ipaddress ip;
   struct ipaddress_formatted fmt;
 
   for (int i = 0; tests[i].name != NULL; i++) {

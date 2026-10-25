@@ -814,8 +814,10 @@ http_selftest_config(void)
 
         if (len2 != len3 && memcmp(urlsamples[i].to, x, len3) != 0) {
             fprintf(stderr, "[-] HTTP.selftest: config URL sample #%u\n", (unsigned)i);
+            free(x);
             return 1;
         }
+        free(x);
     }
 
     /* Test replacing method */
@@ -829,8 +831,10 @@ http_selftest_config(void)
 
         if (len2 != len3 && memcmp(methodsamples[i].to, x, len3) != 0) {
             fprintf(stderr, "[-] HTTP.selftest: config method sample #%u\n", (unsigned)i);
+            free(x);
             return 1;
         }
+        free(x);
     }
 
     /* Test replacing version */
@@ -844,8 +848,10 @@ http_selftest_config(void)
 
         if (len2 != len3 && memcmp(versionsamples[i].to, x, len3) != 0) {
             fprintf(stderr, "[-] HTTP.selftest: config version sample #%u\n", (unsigned)i);
+            free(x);
             return 1;
         }
+        free(x);
     }
 
     /* Test payload */
@@ -859,8 +865,10 @@ http_selftest_config(void)
 
         if (len2 != len3 && memcmp(payloadsamples[i].to, x, len3) != 0) {
             fprintf(stderr, "[-] HTTP.selftest: config payload sample #%u\n", (unsigned)i);
+            free(x);
             return 1;
         }
+        free(x);
     }
 
     /* Test adding fields */

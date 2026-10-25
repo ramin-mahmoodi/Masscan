@@ -908,6 +908,8 @@ receive_thread(void *v)
                 continue;
             case FOUND_UDP:
             case FOUND_DNS:
+                if (!masscan->scan_type.udp)
+                    continue;
                 if (!is_nic_port(masscan, port_me))
                     continue;
                 if (parms->masscan->nmap.packet_trace)
@@ -1524,6 +1526,8 @@ main_scan(struct Masscan *masscan)
              * Join the threads, which doesn't allow us to print out 
              * status messages, but allows us to exit cleanly without
              * any waiting */
+            is_tx_done = 1;
+            is_rx_done = 1;
             for (i=0; i<masscan->nic_count; i++) {
                 struct ThreadPair *parms = &parms_array[i];
 
@@ -1532,8 +1536,6 @@ main_scan(struct Masscan *masscan)
                 pixie_thread_join(parms->thread_handle_recv);
                 parms->thread_handle_recv = 0;
             }
-            is_tx_done = 1;
-            is_rx_done = 1;
         }
 
         break;

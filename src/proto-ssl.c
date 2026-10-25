@@ -1296,7 +1296,9 @@ ssl_selftest(void)
         x = banout_is_contains(banout1, PROTO_SSL3,
                             ", fr.yahoo.com, ");
         if (!x) {
-            printf("x.509 parser failure: google.com\n");
+            printf("x.509 parser failure: yahoo.com\n");
+            banner1_destroy(banner1);
+            banout_release(banout1);
             return 1;
         }
         
@@ -1326,6 +1328,8 @@ ssl_selftest(void)
                             ", www.google.com, www.google.com");
         if (!x) {
             printf("x.509 parser failure: google.com\n");
+            banner1_destroy(banner1);
+            banout_release(banout1);
             return 1;
         }
         banner1_destroy(banner1);

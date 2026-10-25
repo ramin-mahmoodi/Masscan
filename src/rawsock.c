@@ -627,6 +627,7 @@ rawsock_init_adapter(const char *adapter_name,
         if (new_adapter_name == 0) {
             fprintf(stderr, "pcap_open_live(%s) error: bad index\n",
                     adapter_name);
+            free(adapter);
             return 0;
         } else
             adapter_name = new_adapter_name;
@@ -641,6 +642,7 @@ rawsock_init_adapter(const char *adapter_name,
      *----------------------------------------------------------------*/
     if(is_pfring && !is_pfring_dna(adapter_name)){ /*First ensure pfring dna adapter is available*/
         fprintf(stderr,"No pfring adapter available. Please install pfring or run masscan without the --pfring option.\n");
+        free(adapter);
         return 0;
     }
 

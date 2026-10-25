@@ -249,7 +249,7 @@ read_nmap_payloads(FILE *fp, const char *filename,
 
         /* [source] */
         if (memcmp(line, "source", 6) == 0) {
-            memmove(line, line+6, strlen(line+5));
+            memmove(line, line+6, strlen(line+6)+1);
             trim(line, sizeof(line));
             if (!isdigit(line[0])) {
                 fprintf(stderr, "%s:%u: expected source port\n",

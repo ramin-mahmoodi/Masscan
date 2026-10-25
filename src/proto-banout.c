@@ -302,7 +302,9 @@ banout_vprintf(struct BannerOutput *banout, unsigned proto,
     va_copy(marker_cpy, marker);
     len = vsnprintf(str, sizeof(str), fmt, marker_cpy);
     va_end(marker_cpy);
-    if (len > sizeof(str)-1) {
+    if (len < 0)
+        return;
+    if (len > (int)sizeof(str)-1) {
         char *tmp = malloc(len+1);
         vsnprintf(tmp, len+1, fmt, marker);
         banout_append(banout, proto, tmp, len);

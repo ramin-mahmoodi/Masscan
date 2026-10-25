@@ -1,0 +1,113 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-linux:
+    name: Build Linux Binary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libpcap-dev gcc make
+
+      - name: Build
+        run: |
+          make -j4
+          ./bin/masscan --selftest
+
+      - name: Package Linux
+        run: |
+          tar -czvf masscan-linux-x86_64.tar.gz -C bin masscan
+
+      - name: Upload Linux artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: masscan-linux-x86_64
+          path: masscan-linux-x86_64.tar.gz
+
+  build-windows:
+    name: Build Windows Binary
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup MSYS2 / MinGW
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: mingw-w64-x86_64-gcc make
+
+      - name: Build with MinGW
+        shell: msys2 {0}
+        run: |
+          make -j4
+          ./bin/masscan.exe --selftest
+
+      - name: Package Windows
+        shell: pwsh
+        run: |
+          Compress-Archive -Path bin/masscan.exe -DestinationPath masscan-windows-x86_64.zip
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: masscan-windows-x86_64
+          path: masscan-windows-x86_64.zip
+
+  build-macos:
+    name: Build macOS Binary
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build
+        run: |
+          make -j4
+          ./bin/masscan --selftest
+
+      - name: Package macOS
+        run: |
+          tar -czvf masscan-macos-x86_64.tar.gz -C bin masscan
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: masscan-macos-x86_64
+          path: masscan-macos-x86_64.tar.gz
+
+  release:
+    name: Create GitHub Release
+    needs: [build-linux, build-windows, build-macos]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release-artifacts/masscan-linux-x86_64.tar.gz
+            release-artifacts/masscan-windows-x86_64.zip
+            release-artifacts/masscan-macos-x86_64.tar.gz
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true

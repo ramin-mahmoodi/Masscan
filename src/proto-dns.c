@@ -161,6 +161,8 @@ dns_extract_name(const unsigned char px[], unsigned offset, unsigned max,
             if (len == 0) {
                 return; /* end of domain name */
             } else {
+                if (name->length + len + 1 >= 256)
+                    return;
                 memcpy((unsigned char*)name->name+name->length, px+offset, len+1);
                 name->length = (unsigned char)(name->length + len + 1);
                 offset += len + 1;
@@ -178,6 +180,7 @@ proto_dns_parse(struct DNS_Incoming *dns, const unsigned char px[], unsigned off
     static const unsigned MAX_RRs = sizeof(dns->rr_offset)/sizeof(dns->rr_offset[0]);
     unsigned i;
 
+    memset(dns, 0, sizeof(*dns));
     dns->is_valid = 0; /* not valid yet until we've successfully parsed*/
 
     dns->req = px;
@@ -315,7 +318,8 @@ proto_dns_parse(struct DNS_Incoming *dns, const unsigned char px[], unsigned off
     }
 
     dns->query_name.name = dns->query_name_buffer;
-    dns_extract_name(px, dns->rr_offset[0], max, &dns->query_name);
+    if (dns->rr_count > 0)
+        dns_extract_name(px, dns->rr_offset[0], max, &dns->query_name);
 
     dns->is_formerr = 0;
     return;

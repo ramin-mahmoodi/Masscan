@@ -237,7 +237,7 @@ rdp_parse(  const struct Banner1 *banner1,
                 state++;
                 break;
             case TPKT_LENGTH0:
-                rdp->tpkt_length = rdp->tpkt_length;
+                rdp->tpkt_length = c;
                 state++;
                 break;
             case TPKT_LENGTH1:

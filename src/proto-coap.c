@@ -236,7 +236,7 @@ parse_links(const unsigned char *px, unsigned offset, unsigned length, size_t *r
                 continue;
             else if (px[offset] == '\"') {
                 state = PARM_QUOTED;
-            } else if (offset == ';') {
+            } else if (px[offset] == ';') {
                 state = PARM_NAME_BEGIN;
             } else if (px[offset] == ',') {
                 l->parms_length = offset - l->parms_offset;
@@ -655,8 +655,11 @@ proto_coap_selftest(void)
         static const unsigned char *input = (const unsigned char *)
         "</sensors/temp>;if=\"se\\\"\\;\\,\\<\\>\\\\nsor\",</success>";
         links = parse_links(input, 0, (unsigned)(~0), &count);
-        if (!test_is_link("/success", input, links, count, __LINE__))
+        if (!test_is_link("/success", input, links, count, __LINE__)) {
+            free(links);
             return 1;
+        }
+        free(links);
     }
 
     /* test a simple link */
@@ -664,8 +667,11 @@ proto_coap_selftest(void)
         static const unsigned char *input = (const unsigned char *)
             "</sensors/temp>;if=\"sensor\"";
         links = parse_links(input, 0, (unsigned)(~0), &count);
-        if (!test_is_link("/sensors/temp", input, links, count, __LINE__))
+        if (!test_is_link("/sensors/temp", input, links, count, __LINE__)) {
+            free(links);
             return 1;
+        }
+        free(links);
     }
 
 
@@ -687,8 +693,11 @@ proto_coap_selftest(void)
             "</firmware/v2.1>;rt=\"firmware\";sz=262144"
             ;
         links = parse_links(input, 0, (unsigned)(~0), &count);
-        if (!test_is_link("/firmware/v2.1", input, links, count, __LINE__))
+        if (!test_is_link("/firmware/v2.1", input, links, count, __LINE__)) {
+            free(links);
             return 1;
+        }
+        free(links);
     }
     
     /* Now test an entire packet */
