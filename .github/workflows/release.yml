@@ -24,6 +24,7 @@ jobs:
         run: |
           make -j4
           ./bin/masscan --selftest
+          strip bin/masscan
 
       - name: Package Linux
         run: |
@@ -54,6 +55,7 @@ jobs:
         run: |
           make -j4
           ./bin/masscan.exe --selftest
+          strip bin/masscan.exe
 
       - name: Package Windows
         shell: pwsh
@@ -77,6 +79,7 @@ jobs:
         run: |
           make -j4
           ./bin/masscan --selftest
+          strip bin/masscan
 
       - name: Package macOS
         run: |
